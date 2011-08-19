@@ -38,7 +38,7 @@ public class translator {
 		String translateDetails = translate_data.getString(1)
 			.replaceAll("[\\[\"\\]]", "")
 				.replaceAll("(noun,|verb,|adjective,|interjection,)", "\n$1\n")
-					.replace(",",", ").replaceAll("(^, )|(, ?)\n", "");
+					.replace(",",", ").replaceAll("(^, )", "");
 		
 		System.out.println(simpleTranslate + "\n" + translateDetails);
 	}
