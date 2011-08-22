@@ -168,7 +168,7 @@ public class translator {
 			
 				  JSON translate;
 				  JSONArray translate_data;
-			  URL googleURL = new URL("http://translate.google.com/translate_a/t?tl=" + sourceLang + "&client=t&hl=en&sl=" + translationLang + "&text=" + sourceString + "&multires=1");
+			  URL googleURL = new URL("http://translate.google.com/translate_a/t?tl=" + translationLang + "&client=t&hl=en&sl=" + sourceLang + "&text=" + sourceString + "&multires=1");
   			  URLConnection googleConnection = googleURL.openConnection();
 			  googleConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 
