@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 //import java.awt.event.WindowAdapter;
 //import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,6 +24,10 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.net.URL;
+
+import jxgrabkey.HotkeyConflictException;
+import jxgrabkey.HotkeyListener;
+import jxgrabkey.JXGrabKey;
 
 /**
  * 
@@ -37,7 +42,10 @@ public class translator {
 	public static JFrame noticeMessage;
 	public static String sourceLang = "en";
 	public static String translationLang = "ru";
-	
+	private static final int MY_HOTKEY_INDEX = 1;
+	private static boolean hotkeyEventReceived = false;
+	private static Timer timer;
+	private static Robot robo;
 	/**
 	 * All magic is here = )
 	 * 
@@ -45,6 +53,7 @@ public class translator {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
+		
 		//create popup menu 
 		PopupMenu popup = new PopupMenu();
 		
@@ -66,12 +75,6 @@ public class translator {
 
 	    trayIcon = new TrayIcon(image, "hi there", popup);	    
 	    trayIcon.setImageAutoSize(true);
-
-	    class RemindTask extends TimerTask {
-	    	public void run() {
-	    		closeMsg(noticeMessage);
-	    	}
-	    }	    
 	    
 		MouseListener clickClose = new MouseAdapter() {
 			/**
@@ -81,7 +84,9 @@ public class translator {
 			 */
 			public void mouseClicked(MouseEvent event) {
 				
-			    Timer timer = new Timer();
+				if (timer != null) {
+					timer = new Timer();
+				}
 				
 				MouseListener ml = new MouseAdapter() {
 					public void mouseClicked(MouseEvent event) {
@@ -119,9 +124,101 @@ public class translator {
 		};	    
 	    trayIcon.addMouseListener(clickClose);
 
-	    systemTray.add(trayIcon);//*/
+	    systemTray.add(trayIcon);
+	    
+	    // Hotkeys 
+	    System.load(new File("lib/libJXGrabKey.so").getCanonicalPath());
+	    
+	    //JXGrabKey.setDebugOutput(true);
+	    
+		try{
+			int key = KeyEvent.VK_Z, mask = KeyEvent.ALT_MASK;
+			
+			JXGrabKey.getInstance().registerAwtHotkey(MY_HOTKEY_INDEX, mask, key);
+		}catch(HotkeyConflictException e){
+			JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+			
+			JXGrabKey.getInstance().cleanUp(); 
+			return;
+		}	    
+	    
+		//Implement HotkeyListener
+		HotkeyListener hotkeyListener = new jxgrabkey.HotkeyListener(){
+			public void onHotkey(int hotkey_idx) {
+				if (hotkey_idx != MY_HOTKEY_INDEX)
+					return;
+				hotkeyEventReceived = true;
+
+				showTranslation();
+				
+			}
+        };
+        
+        //Add HotkeyListener
+		JXGrabKey.getInstance().addHotkeyListener(hotkeyListener);
+		
+		//Wait for Hotkey Event
+		while(!hotkeyEventReceived){
+			Thread.sleep(1000);
+		}
 	}
 
+
+    static class RemindTask extends TimerTask {
+    	public void run() {
+    		closeMsg(noticeMessage);
+    	}
+    }	
+	
+	private static void showTranslation() {
+		try {
+			robo = new Robot();
+			robo.keyPress(KeyEvent.VK_CONTROL);
+			robo.delay(500);
+			robo.keyPress(KeyEvent.VK_C);
+			robo.keyRelease(KeyEvent.VK_CONTROL);
+			robo.keyRelease(KeyEvent.VK_C);
+			
+			if (timer != null) {
+				timer = new Timer();
+			}
+			
+			MouseListener ml = new MouseAdapter() {
+				public void mouseClicked(MouseEvent event) {
+					closeMsg(noticeMessage);
+				}
+			};
+
+			String translation = makeTranslation();
+			
+			if (noticeMessage != null) {
+				closeMsg(noticeMessage);
+			}
+			noticeMessage = new JFrame();
+				noticeMessage.setDefaultCloseOperation(0);
+			setTranslucency(noticeMessage);
+			noticeMessage.setUndecorated(true);
+			noticeMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			noticeMessage.setBackground(new Color(0f, 0f, 0f, 1f / 3f));
+
+			noticeMessage.addMouseListener(ml);			
+			
+		    JLabel msg = new JLabel();
+		    msg.setText("<html>" + translation + "</html>");
+		    msg.setHorizontalTextPosition(JLabel.LEFT);
+		    msg.setVerticalTextPosition(JLabel.CENTER);
+		    noticeMessage.add(msg);		
+		    noticeMessage.setDefaultCloseOperation(1);				
+		    
+		    noticeMessage.pack();	
+			noticeMessage.setVisible(true);
+			
+			timer.schedule(new RemindTask(), 15 * 1000);
+		}catch(AWTException e){
+			e.printStackTrace();					
+		}		
+				
+	}
 	
     private static void setTranslucency(Window window){
         try {
