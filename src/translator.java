@@ -159,7 +159,7 @@ public class translator {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
 		boolean hasTransferableText =
-		      (contents != null) &&
+		      (contents != null) && 
 		      contents.isDataFlavorSupported(DataFlavor.stringFlavor)
 		    ;
 		if ( hasTransferableText ) {
