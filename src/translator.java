@@ -1,10 +1,11 @@
-import java.util.*;
+//import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.io.*;
 import net.sf.json.*;
-//import java.text.*;
 
 import javax.swing.*;
 //import javax.swing.plaf.metal.MetalIconFactory;
@@ -52,26 +53,35 @@ public class translator {
 
 	    trayIcon = new TrayIcon(image, "hi there", popup);	    
 	    trayIcon.setImageAutoSize(true);
+
+	    class RemindTask extends TimerTask {
+	    	public void run() {
+	    		closeMsg(noticeMessage);
+	    	}
+	    }	    
 	    
 		MouseListener clickClose = new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
+				
+			    Timer timer = new Timer();
 				
 				MouseListener ml = new MouseAdapter() {
 					public void mouseClicked(MouseEvent event) {
 						closeMsg(noticeMessage);
 					}
-				};			
-				//Icon warnIcon = MetalIconFactory.getTreeComputerIcon();
+				};
+
 				String translation = makeTranslation();
-				//trayIcon.setToolTip(makeTranslation());
 				
+				if (noticeMessage != null) {
+					closeMsg(noticeMessage);
+				}
 				noticeMessage = new JFrame("ok!");
-				noticeMessage.setDefaultCloseOperation(0);
+ 				noticeMessage.setDefaultCloseOperation(0);
 				setTranslucency(noticeMessage);
 				noticeMessage.setUndecorated(true);
 				noticeMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				noticeMessage.setBackground(new Color(0f, 0f, 0f, 1f / 3f));
-				noticeMessage.pack();
 
 				noticeMessage.addMouseListener(ml);			
 				
@@ -82,16 +92,19 @@ public class translator {
 			    noticeMessage.add(msg);		
 			    noticeMessage.setDefaultCloseOperation(1);				
 			    
-				noticeMessage.setSize(500, 100);	
+			    noticeMessage.pack();	
 				noticeMessage.setVisible(true);
+				
+				timer.schedule(new RemindTask(), 15 * 1000);				
 			}
+			
 		};	    
 	    trayIcon.addMouseListener(clickClose);
 
 	    systemTray.add(trayIcon);//*/
-     
 	}
 
+	
     private static void setTranslucency( Window window){
         try {
                Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
@@ -129,9 +142,7 @@ public class translator {
 		    ;
 		if ( hasTransferableText ) {
 	      try {
-	    	  //System.out.println( (String)contents.getTransferData(DataFlavor.stringFlavor));
-	    	  
-	  		  String sourceString = URLEncoder.encode((String)contents.getTransferData(DataFlavor.stringFlavor));
+	  		  String sourceString = URLEncoder.encode((String)contents.getTransferData(DataFlavor.stringFlavor), "UTF-8");
 			  String fromLang = "en";
 			  String toLang = "ru";
 			
@@ -162,12 +173,10 @@ public class translator {
 			  
 			  return simpleTranslate + "\n<br />" + translateDetails;
 	      }
-	      catch (UnsupportedFlavorException ex){				        
-	        System.out.println(ex);
+	      catch (UnsupportedFlavorException ex){
 	        ex.printStackTrace();
 	      }
 	      catch (IOException ex) {
-	        System.out.println(ex);
 	        ex.printStackTrace();
 	      }
 	    }	
