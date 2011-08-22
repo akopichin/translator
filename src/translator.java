@@ -19,21 +19,33 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.datatransfer.Clipboard;
-//import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
-//import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.net.URL;
 
-
+/**
+ * 
+ * This class serve to translate text from clipboard
+ * to russian with google.translate
+ * 
+ * @author akopichin
+ *
+ */
 public class translator {
 	public static TrayIcon trayIcon;
 	public static JFrame noticeMessage;
-
+	public static String sourceLang = "en";
+	public static String translationLang = "ru";
 	
+	/**
+	 * All magic is here = )
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
-		//System.out.print("OK");
+		//create popup menu 
 		PopupMenu popup = new PopupMenu();
 		
 		MenuItem exitItem = new MenuItem("close");
@@ -46,7 +58,8 @@ public class translator {
 		});
 	    
 	    popup.add(exitItem);
-
+	    
+	    //create tray icon
 	    SystemTray systemTray = SystemTray.getSystemTray();
 
 	    Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
@@ -61,6 +74,11 @@ public class translator {
 	    }	    
 	    
 		MouseListener clickClose = new MouseAdapter() {
+			/**
+			 * then clicked on tray icon
+			 * create floating notice 
+			 * and 
+			 */
 			public void mouseClicked(MouseEvent event) {
 				
 			    Timer timer = new Timer();
@@ -76,7 +94,7 @@ public class translator {
 				if (noticeMessage != null) {
 					closeMsg(noticeMessage);
 				}
-				noticeMessage = new JFrame("ok!");
+				noticeMessage = new JFrame();
  				noticeMessage.setDefaultCloseOperation(0);
 				setTranslucency(noticeMessage);
 				noticeMessage.setUndecorated(true);
@@ -105,11 +123,11 @@ public class translator {
 	}
 
 	
-    private static void setTranslucency( Window window){
+    private static void setTranslucency(Window window){
         try {
                Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
                Method mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-               mSetWindowOpacity.invoke(null, window, Float.valueOf(0.75f));
+               mSetWindowOpacity.invoke(null, window, Float.valueOf(0.6f));
             } catch (NoSuchMethodException ex) {
                ex.printStackTrace();
             } catch (SecurityException ex) {
@@ -129,7 +147,11 @@ public class translator {
         j.dispose();
 	}    
     
-	/* translate */
+	/**
+	 * translatin' here
+	 * 
+	 * @return String
+	 */
 	static String makeTranslation() {
 		String simpleTranslate = "";
 		String translateDetails = "";
@@ -143,12 +165,10 @@ public class translator {
 		if ( hasTransferableText ) {
 	      try {
 	  		  String sourceString = URLEncoder.encode((String)contents.getTransferData(DataFlavor.stringFlavor), "UTF-8");
-			  String fromLang = "en";
-			  String toLang = "ru";
 			
 				  JSON translate;
 				  JSONArray translate_data;
-			  URL googleURL = new URL("http://translate.google.com/translate_a/t?tl=" + toLang + "&client=t&hl=en&sl=" + fromLang + "&text=" + sourceString + "&multires=1");
+			  URL googleURL = new URL("http://translate.google.com/translate_a/t?tl=" + sourceLang + "&client=t&hl=en&sl=" + translationLang + "&text=" + sourceString + "&multires=1");
   			  URLConnection googleConnection = googleURL.openConnection();
 			  googleConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
 
