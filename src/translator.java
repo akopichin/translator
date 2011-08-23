@@ -192,8 +192,8 @@ public class translator {
 		    noticeMessage.add(msg);
 		    noticeMessage.setDefaultCloseOperation(1);
 		    
+		    //noticeMessage.setMaximizedBounds(new Rectangle(new Dimension(1500,1500)));
 		    noticeMessage.pack();
-		    noticeMessage.setMaximizedBounds(new Rectangle(new Dimension(800,550)));
 			noticeMessage.setVisible(true);			
 		    
 			try {
@@ -271,8 +271,9 @@ public class translator {
 			  simpleTranslate = translate_data.getJSONArray(0).getString(0).replaceAll("[\\[\"\\]]", "").replace(","," | ");
 			  translateDetails = ((translate_data.getString(1) != "null")? translate_data.getString(1) : "")
 				.replaceAll("[\\[\"\\]]", "")
-					.replaceAll("(noun,|verb,|adjective,|interjection,)", "\n$1\n<br /><br />")
-						.replace(",",", ").replaceAll("(^, )", "");
+					.replaceAll("(noun,|verb,|adjective,|interjection,)", "\n<br /><b>$1</b>")
+						.replaceAll(",", "\n<br />")
+							.replace(",",", ").replaceAll("(^, )", "");
 			
 			  
 			  return simpleTranslate + "\n<br /><br />" + translateDetails;
