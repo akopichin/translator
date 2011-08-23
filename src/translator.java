@@ -193,7 +193,7 @@ public class translator {
 		    noticeMessage.setDefaultCloseOperation(1);
 		    
 		    noticeMessage.pack();
-		    noticeMessage.setExtendedState(Frame.WIDTH);
+		    noticeMessage.setMaximizedBounds(new Rectangle(new Dimension(800,550)));
 			noticeMessage.setVisible(true);			
 		    
 			try {
@@ -269,14 +269,13 @@ public class translator {
 			  translate_data = JSONArray.fromObject(JSONSerializer.toJava(translate));
 
 			  simpleTranslate = translate_data.getJSONArray(0).getString(0).replaceAll("[\\[\"\\]]", "").replace(","," | ");
-			  translateDetails = translate_data.getString(1)
+			  translateDetails = ((translate_data.getString(1) != "null")? translate_data.getString(1) : "")
 				.replaceAll("[\\[\"\\]]", "")
-					.replaceAll("(noun,|verb,|adjective,|interjection,)", "\n$1\n<br />")
-						.replaceAll("null", " ")
-							.replace(",",", ").replaceAll("(^, )", "");
+					.replaceAll("(noun,|verb,|adjective,|interjection,)", "\n$1\n<br /><br />")
+						.replace(",",", ").replaceAll("(^, )", "");
 			
 			  
-			  return simpleTranslate + "\n<br />" + translateDetails;
+			  return simpleTranslate + "\n<br /><br />" + translateDetails;
 	      }
 	      catch (UnsupportedFlavorException ex){
 	        ex.printStackTrace();
