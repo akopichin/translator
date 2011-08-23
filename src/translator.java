@@ -73,53 +73,23 @@ public class translator {
 
 	    Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
 
-	    trayIcon = new TrayIcon(image, "hi there", popup);	    
+	    trayIcon = new TrayIcon(image, sourceLang + "=>" + translationLang, popup);	    
 	    trayIcon.setImageAutoSize(true);
 	    
+	    
 		MouseListener clickClose = new MouseAdapter() {
-			/**
-			 * then clicked on tray icon
-			 * create floating notice 
-			 * and 
-			 */
-			public void mouseClicked(MouseEvent event) {
-				
-				if (timer != null) {
-					timer = new Timer();
-				}
-				
-				MouseListener ml = new MouseAdapter() {
-					public void mouseClicked(MouseEvent event) {
-						closeMsg(noticeMessage);
-					}
-				};
-
-				String translation = makeTranslation();
-				
-				if (noticeMessage != null) {
-					closeMsg(noticeMessage);
-				}
-				noticeMessage = new JFrame();
- 				noticeMessage.setDefaultCloseOperation(0);
-				setTranslucency(noticeMessage);
-				noticeMessage.setUndecorated(true);
-				noticeMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				noticeMessage.setBackground(new Color(0f, 0f, 0f, 1f / 3f));
-
-				noticeMessage.addMouseListener(ml);			
-				
-			    JLabel msg = new JLabel();
-			    msg.setText("<html>" + translation + "</html>");
-			    msg.setHorizontalTextPosition(JLabel.LEFT);
-			    msg.setVerticalTextPosition(JLabel.CENTER);
-			    noticeMessage.add(msg);		
-			    noticeMessage.setDefaultCloseOperation(1);				
-			    
-			    noticeMessage.pack();	
-				noticeMessage.setVisible(true);
-				
-				timer.schedule(new RemindTask(), 15 * 1000);				
-			}
+			
+		/**
+		 * change direction
+		 * of translation 
+		 * en-ru <=> ru-en
+		 */
+		public void mouseClicked(MouseEvent event) {			
+			String tmp = sourceLang;
+			sourceLang = translationLang;
+			translationLang = tmp;
+			trayIcon.setToolTip(sourceLang + "=>" + translationLang);
+		}
 			
 		};	    
 	    trayIcon.addMouseListener(clickClose);
@@ -163,8 +133,7 @@ public class translator {
 		}
 	}
 
-
-    static class RemindTask extends TimerTask {
+    public static class TTask extends TimerTask {
     	public void run() {
     		closeMsg(noticeMessage);
     	}
@@ -178,11 +147,14 @@ public class translator {
 			robo.keyPress(KeyEvent.VK_C);
 			robo.keyRelease(KeyEvent.VK_CONTROL);
 			robo.keyRelease(KeyEvent.VK_C);
+			robo = null;
 			
-			if (timer != null) {
-				timer = new Timer();
+			timer = new Timer();			
+			
+			if (noticeMessage != null) {
+				closeMsg(noticeMessage);
 			}
-			
+						
 			MouseListener ml = new MouseAdapter() {
 				public void mouseClicked(MouseEvent event) {
 					closeMsg(noticeMessage);
@@ -191,9 +163,6 @@ public class translator {
 
 			String translation = makeTranslation();
 			
-			if (noticeMessage != null) {
-				closeMsg(noticeMessage);
-			}
 			noticeMessage = new JFrame();
 				noticeMessage.setDefaultCloseOperation(0);
 			setTranslucency(noticeMessage);
@@ -207,13 +176,17 @@ public class translator {
 		    msg.setText("<html>" + translation + "</html>");
 		    msg.setHorizontalTextPosition(JLabel.LEFT);
 		    msg.setVerticalTextPosition(JLabel.CENTER);
-		    noticeMessage.add(msg);		
-		    noticeMessage.setDefaultCloseOperation(1);				
+		    noticeMessage.add(msg);
+		    noticeMessage.setDefaultCloseOperation(1);
 		    
-		    noticeMessage.pack();	
-			noticeMessage.setVisible(true);
-			
-			timer.schedule(new RemindTask(), 15 * 1000);
+		    noticeMessage.pack();
+			noticeMessage.setVisible(true);			
+		    
+			try {
+				timer.schedule(new translator.TTask(), 15 * 1000);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}catch(AWTException e){
 			e.printStackTrace();					
 		}		
@@ -224,7 +197,7 @@ public class translator {
         try {
                Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
                Method mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-               mSetWindowOpacity.invoke(null, window, Float.valueOf(0.6f));
+               mSetWindowOpacity.invoke(null, window, Float.valueOf(0.8f));
             } catch (NoSuchMethodException ex) {
                ex.printStackTrace();
             } catch (SecurityException ex) {
