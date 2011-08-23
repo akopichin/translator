@@ -156,6 +156,12 @@ public class translator {
 			robo.keyRelease(KeyEvent.VK_C);
 			robo = null;
 			
+			try {
+				timer.cancel();
+			} catch(Exception e){
+				//
+			}
+			
 			timer = new Timer();			
 			
 			if (noticeMessage != null) {
@@ -187,6 +193,7 @@ public class translator {
 		    noticeMessage.setDefaultCloseOperation(1);
 		    
 		    noticeMessage.pack();
+		    noticeMessage.setExtendedState(Frame.WIDTH);
 			noticeMessage.setVisible(true);			
 		    
 			try {
@@ -265,7 +272,8 @@ public class translator {
 			  translateDetails = translate_data.getString(1)
 				.replaceAll("[\\[\"\\]]", "")
 					.replaceAll("(noun,|verb,|adjective,|interjection,)", "\n$1\n<br />")
-						.replace(",",", ").replaceAll("(^, )", "");
+						.replaceAll("null", " ")
+							.replace(",",", ").replaceAll("(^, )", "");
 			
 			  
 			  return simpleTranslate + "\n<br />" + translateDetails;
