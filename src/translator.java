@@ -46,6 +46,8 @@ public class translator {
 	private static boolean hotkeyEventReceived = false;
 	private static Timer timer;
 	private static Robot robo;
+	private static Image iconEnRu;
+	private static Image iconRuEn;
 	/**
 	 * All magic is here = )
 	 * 
@@ -71,9 +73,10 @@ public class translator {
 	    //create tray icon
 	    SystemTray systemTray = SystemTray.getSystemTray();
 
-	    Image image = Toolkit.getDefaultToolkit().getImage("icon.png");
+	    iconEnRu = Toolkit.getDefaultToolkit().getImage("icon_en-ru.png");
+	    iconRuEn = Toolkit.getDefaultToolkit().getImage("icon_ru-en.png");
 
-	    trayIcon = new TrayIcon(image, sourceLang + "=>" + translationLang, popup);	    
+	    trayIcon = new TrayIcon(iconEnRu, "Translator: select text and press ALT+Z", popup);	    
 	    trayIcon.setImageAutoSize(true);
 	    
 	    
@@ -88,7 +91,11 @@ public class translator {
 			String tmp = sourceLang;
 			sourceLang = translationLang;
 			translationLang = tmp;
-			trayIcon.setToolTip(sourceLang + "=>" + translationLang);
+			if (sourceLang == "en"){
+				trayIcon.setImage(iconEnRu);
+			} else {				
+				trayIcon.setImage(iconRuEn);
+			}
 		}
 			
 		};	    

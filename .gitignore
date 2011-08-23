@@ -2,6 +2,7 @@
 # ignore all .htaccess
 .htaccess
 .classpath
+*.psd
 
 # ignore all IIS files
 web.config
