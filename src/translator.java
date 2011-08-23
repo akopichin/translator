@@ -232,7 +232,7 @@ public class translator {
 		      (contents != null) && 
 		      contents.isDataFlavorSupported(DataFlavor.stringFlavor)
 		    ;
-		if ( hasTransferableText ) {
+		if (hasTransferableText) {
 	      try {
 	  		  String sourceString = URLEncoder.encode((String)contents.getTransferData(DataFlavor.stringFlavor), "UTF-8");
 			
