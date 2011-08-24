@@ -7,6 +7,7 @@ import java.net.*;
 import java.io.*;
 import net.sf.json.*;
 
+import javax.naming.directory.DirContext;
 import javax.swing.*;
 //import javax.swing.plaf.metal.MetalIconFactory;
 
@@ -48,6 +49,7 @@ public class translator {
 	private static Robot robo;
 	private static Image iconEnRu;
 	private static Image iconRuEn;
+	private static String Location;
 	/**
 	 * All magic is here = )
 	 * 
@@ -55,7 +57,9 @@ public class translator {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		
+		//absolute file location
+		Location = new File(translator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
+		//System.out.print(Location + File.separatorChar);
 		//create popup menu 
 		PopupMenu popup = new PopupMenu();
 		
@@ -73,8 +77,8 @@ public class translator {
 	    //create tray icon
 	    SystemTray systemTray = SystemTray.getSystemTray();
 
-	    iconEnRu = Toolkit.getDefaultToolkit().getImage("icon_en-ru.png");
-	    iconRuEn = Toolkit.getDefaultToolkit().getImage("icon_ru-en.png");
+	    iconEnRu = Toolkit.getDefaultToolkit().getImage(Location + File.separatorChar + "icon_en-ru.png");
+	    iconRuEn = Toolkit.getDefaultToolkit().getImage(Location + File.separatorChar + "icon_ru-en.png");
 
 	    trayIcon = new TrayIcon(iconEnRu, "Translator: select text and press ALT+Z", popup);	    
 	    trayIcon.setImageAutoSize(true);
@@ -104,7 +108,8 @@ public class translator {
 	    systemTray.add(trayIcon);
 	    
 	    // Hotkeys 
-	    System.load(new File("lib/libJXGrabKey.so").getCanonicalPath());
+	    
+	    System.load(Location + File.separatorChar + "lib/libJXGrabKey.so");
 	    
 	    //JXGrabKey.setDebugOutput(true);
 	    
