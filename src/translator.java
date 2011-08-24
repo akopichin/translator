@@ -7,7 +7,6 @@ import java.net.*;
 import java.io.*;
 import net.sf.json.*;
 
-import javax.naming.directory.DirContext;
 import javax.swing.*;
 //import javax.swing.plaf.metal.MetalIconFactory;
 
@@ -59,12 +58,13 @@ public class translator {
 	public static void main(String[] args) throws Exception {
 		//absolute file location
 		Location = new File(translator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
-		//System.out.print(Location + File.separatorChar);
+
 		//create popup menu 
 		PopupMenu popup = new PopupMenu();
 		
 		MenuItem exitItem = new MenuItem("close");
-	    
+		MenuItem translateItem = new MenuItem("translate");
+		
 		exitItem.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -72,6 +72,14 @@ public class translator {
 			}
 		});
 	    
+		translateItem.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showTranslation();
+			}
+		});
+	    
+		popup.add(translateItem);
 	    popup.add(exitItem);
 	    
 	    //create tray icon
@@ -132,7 +140,6 @@ public class translator {
 				hotkeyEventReceived = true;
 
 				showTranslation();
-				
 			}
         };
         
