@@ -163,9 +163,9 @@ public class translator {
 			robo = new Robot();
 			robo.keyPress(KeyEvent.VK_CONTROL);
 			robo.delay(500);
-			robo.keyPress(KeyEvent.VK_C);
+			robo.keyPress(KeyEvent.VK_INSERT);
 			robo.keyRelease(KeyEvent.VK_CONTROL);
-			robo.keyRelease(KeyEvent.VK_C);
+			robo.keyRelease(KeyEvent.VK_INSERT);
 			robo = null;
 			
 			try {
