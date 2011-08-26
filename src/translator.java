@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 //import java.awt.event.WindowAdapter;
 //import java.awt.event.WindowEvent;
+//import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
@@ -49,6 +50,12 @@ public class translator {
 	private static Image iconEnRu;
 	private static Image iconRuEn;
 	private static String Location;
+
+	public static void mousePressed(MouseEvent event) {
+		Point current = event.getPoint();
+		System.out.println(current.x);
+	}
+	
 	/**
 	 * All magic is here = )
 	 * 
@@ -58,7 +65,7 @@ public class translator {
 	public static void main(String[] args) throws Exception {
 		//absolute file location
 		Location = new File(translator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
-
+		
 		//create popup menu 
 		PopupMenu popup = new PopupMenu();
 		
@@ -72,6 +79,7 @@ public class translator {
 			}
 		});
 	    
+				
 		translateItem.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
